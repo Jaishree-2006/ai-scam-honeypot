@@ -217,6 +217,9 @@ const authPassword = document.getElementById("auth-password");
 const authSubmit = document.getElementById("auth-submit");
 const oauthButtons = document.querySelectorAll(".oauth-btn[data-provider]");
 const userAvatar = document.getElementById("user-avatar");
+const userMenu = document.getElementById("user-menu");
+const userName = document.getElementById("user-name");
+const userEmail = document.getElementById("user-email");
 const authStatus = document.getElementById("auth-status");
 const toggleAuth = document.getElementById("toggle-auth");
 const toggleText = document.getElementById("toggle-text");
@@ -306,17 +309,32 @@ function setAuthUI(user) {
     userAvatar.textContent = name[0].toUpperCase();
     userAvatar.hidden = false;
     userAvatar.style.display = "grid";
-    loginBtn.hidden = false;
-    signupBtn.hidden = false;
+    loginBtn.hidden = true;
+    signupBtn.hidden = true;
+    if (userName) userName.textContent = user.user_metadata?.full_name || user.user_metadata?.name || "User";
+    if (userEmail) userEmail.textContent = user.email || "";
+    if (userMenu) userMenu.hidden = true;
     currentUser = user;
   } else {
     userAvatar.hidden = true;
     userAvatar.style.display = "none";
     loginBtn.hidden = false;
     signupBtn.hidden = false;
+    if (userMenu) userMenu.hidden = true;
     currentUser = null;
   }
 }
+
+userAvatar?.addEventListener("click", () => {
+  if (!userMenu) return;
+  userMenu.hidden = !userMenu.hidden;
+});
+
+document.addEventListener("click", (event) => {
+  if (!userMenu || userMenu.hidden) return;
+  if (event.target === userAvatar || userMenu.contains(event.target)) return;
+  userMenu.hidden = true;
+});
 
 function showToast(message) {
   authToast.textContent = message;
