@@ -313,27 +313,27 @@ function setAuthUI(user) {
     signupBtn.hidden = true;
     if (userName) userName.textContent = user.user_metadata?.full_name || user.user_metadata?.name || "User";
     if (userEmail) userEmail.textContent = user.email || "";
-    if (userMenu) userMenu.hidden = true;
+    if (userMenu) userMenu.classList.remove("open");
     currentUser = user;
   } else {
     userAvatar.hidden = true;
     userAvatar.style.display = "none";
     loginBtn.hidden = false;
     signupBtn.hidden = false;
-    if (userMenu) userMenu.hidden = true;
+    if (userMenu) userMenu.classList.remove("open");
     currentUser = null;
   }
 }
 
 userAvatar?.addEventListener("click", () => {
   if (!userMenu) return;
-  userMenu.hidden = !userMenu.hidden;
+  userMenu.classList.toggle("open");
 });
 
 document.addEventListener("click", (event) => {
-  if (!userMenu || userMenu.hidden) return;
+  if (!userMenu || !userMenu.classList.contains("open")) return;
   if (event.target === userAvatar || userMenu.contains(event.target)) return;
-  userMenu.hidden = true;
+  userMenu.classList.remove("open");
 });
 
 function showToast(message) {
