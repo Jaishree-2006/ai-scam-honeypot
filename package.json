@@ -1,0 +1,19 @@
+{
+  "name": "agentic-honeypot",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "start": "node server.js"
+  },
+  "dependencies": {
+    "@supabase/supabase-js": "^2.94.1",
+    "dotenv": "^17.2.3",
+    "express": "^4.19.2"
+  },
+  "main": "app.js",
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "description": ""
+}
