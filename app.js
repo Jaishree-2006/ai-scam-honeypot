@@ -220,6 +220,7 @@ const userAvatar = document.getElementById("user-avatar");
 const userMenu = document.getElementById("user-menu");
 const userName = document.getElementById("user-name");
 const userEmail = document.getElementById("user-email");
+const signOutBtn = document.getElementById("sign-out");
 const authStatus = document.getElementById("auth-status");
 const toggleAuth = document.getElementById("toggle-auth");
 const toggleText = document.getElementById("toggle-text");
@@ -303,24 +304,28 @@ oauthButtons.forEach((btn) => {
 function setAuthUI(user) {
   const loginBtn = document.querySelector('[data-modal="login"]');
   const signupBtn = document.querySelector('[data-modal="signup"]');
+  const isAnonymous = Boolean(user?.is_anonymous);
+  const isAuthenticated = Boolean(user && user.email && !isAnonymous);
 
-  if (user) {
+  if (isAuthenticated) {
     const name = (user.email || "U").trim();
     userAvatar.textContent = name[0].toUpperCase();
     userAvatar.hidden = false;
     userAvatar.style.display = "grid";
-    loginBtn.hidden = true;
-    signupBtn.hidden = true;
+    if (loginBtn) loginBtn.hidden = true;
+    if (signupBtn) signupBtn.hidden = true;
     if (userName) userName.textContent = user.user_metadata?.full_name || user.user_metadata?.name || "User";
     if (userEmail) userEmail.textContent = user.email || "";
     if (userMenu) userMenu.classList.remove("open");
+    if (signOutBtn) signOutBtn.hidden = false;
     currentUser = user;
   } else {
     userAvatar.hidden = true;
     userAvatar.style.display = "none";
-    loginBtn.hidden = false;
-    signupBtn.hidden = false;
+    if (loginBtn) loginBtn.hidden = false;
+    if (signupBtn) signupBtn.hidden = false;
     if (userMenu) userMenu.classList.remove("open");
+    if (signOutBtn) signOutBtn.hidden = true;
     currentUser = null;
   }
 }
@@ -334,6 +339,17 @@ document.addEventListener("click", (event) => {
   if (!userMenu || !userMenu.classList.contains("open")) return;
   if (event.target === userAvatar || userMenu.contains(event.target)) return;
   userMenu.classList.remove("open");
+});
+
+signOutBtn?.addEventListener("click", async () => {
+  const { error } = await supabase.auth.signOut();
+  if (error) {
+    showToast(error.message || "Unable to sign out");
+    return;
+  }
+  setAuthUI(null);
+  if (userMenu) userMenu.classList.remove("open");
+  showToast("Signed out");
 });
 
 function showToast(message) {
@@ -352,7 +368,17 @@ supabase.auth.onAuthStateChange((event, session) => {
 });
 
 const initSession = await supabase.auth.getSession();
-setAuthUI(initSession.data?.session?.user || null);
+if (initSession.data?.session?.user) {
+  const { data, error } = await supabase.auth.getUser();
+  if (error || !data?.user) {
+    await supabase.auth.signOut();
+    setAuthUI(null);
+  } else {
+    setAuthUI(data.user);
+  }
+} else {
+  setAuthUI(null);
+}
 
 document.querySelectorAll('a[href="#dashboard"], a[href="#live"]').forEach((link) => {
   link.addEventListener("click", (e) => {

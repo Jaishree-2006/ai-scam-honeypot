@@ -67,6 +67,7 @@ main,
   align-items: center;
   justify-content: flex-start;
   gap: 14px;
+  flex-wrap: wrap;
   padding: 20px 8vw;
   background: rgba(4, 16, 9, 0.85);
   backdrop-filter: blur(12px);
@@ -118,6 +119,20 @@ main,
 .user-menu.open { display: grid; }
 .user-name { color: #38f28c; font-weight: 600; font-size: 14px; }
 .user-email { color: #e9fff2; font-size: 12px; opacity: 0.85; }
+.menu-action {
+  margin-top: 6px;
+  border: 1px solid rgba(61, 255, 138, 0.35);
+  background: rgba(6, 18, 10, 0.85);
+  color: var(--text);
+  border-radius: 10px;
+  padding: 6px 10px;
+  font-size: 12px;
+  cursor: pointer;
+}
+.menu-action:hover {
+  border-color: rgba(61, 255, 138, 0.7);
+  box-shadow: 0 0 14px rgba(61, 255, 138, 0.25);
+}
 .links a {
   color: var(--muted);
   text-decoration: none;
@@ -851,4 +866,17 @@ input, textarea {
   .dash { grid-template-columns: 1fr; }
   .dashboard-grid { grid-template-columns: 1fr; }
   .overview-metrics { grid-template-columns: 1fr; }
+}
+
+@media (max-width: 720px) {
+  .auth-actions {
+    width: 100%;
+    justify-content: flex-end;
+    gap: 8px;
+    margin-top: 10px;
+  }
+  .auth-actions .btn {
+    padding: 8px 12px;
+    font-size: 12px;
+  }
 }
